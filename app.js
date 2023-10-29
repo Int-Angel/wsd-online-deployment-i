@@ -1,24 +1,47 @@
 import { Hono } from "https://deno.land/x/hono@v3.7.4/mod.ts";
-import { openKv, get, set } from "https://deno.land/std/kv/mod.ts";
 
 const app = new Hono();
-const kv = await openKv();
 
-// Define the feedback endpoints for values 1, 2, and 3.
-for (let feedbackValue = 1; feedbackValue <= 3; feedbackValue++) {
-  // Define the GET endpoint to retrieve the count for a specific feedback value.
-  app.get(`/feedbacks/${feedbackValue}`, async (c) => {
-    const count = await get(kv, `Feedback ${feedbackValue}`);
-    return c.text(`Feedback ${feedbackValue}: ${count || 0}`);
-  });
-
-  // Define the POST endpoint to increment the count for a specific feedback value.
-  app.post(`/feedbacks/${feedbackValue}`, async (c) => {
-    const currentCount = await get(kv, `Feedback ${feedbackValue}`);
-    const newCount = (parseInt(currentCount) || 0) + 1;
-    await set(kv, `Feedback ${feedbackValue}`, newCount.toString());
-    return c.text(`Feedback ${feedbackValue} incremented to ${newCount}`);
-  });
+async function getFeedback(key) {
+    const kv = await Deno.openKv();
+    const count = await kv.get([key]);
+    return count.value ? parseInt(count.value) : 0;
 }
+
+async function incrementFeedback(key) {
+    const kv = await Deno.openKv();
+    const currentCount = await getFeedbacl(key);
+    await kv.set([key], (currentCount + 1));
+}
+
+app.get("/feedbacks/1", async (c) => {
+  const kv = await Deno.openKv();
+  await getFeedback("1");
+  return c.text(`Feedback 1: ${count}`);
+});
+
+app.post("/feedbacks/1", async (c) => {
+  await incrementFeedback("1");
+});
+
+app.get("/feedbacks/2", async (c) => {
+  const kv = await Deno.openKv();
+  await getFeedback("2");
+  return c.text(`Feedback 2: ${count}`);
+});
+
+app.post("/feedbacks/2", async (c) => {
+  await incrementFeedback("2");
+});
+
+app.get("/feedbacks/3", async (c) => {
+  const kv = await Deno.openKv();
+  await getFeedback("3");
+  return c.text(`Feedback 3: ${count}`);
+});
+
+app.post("/feedbacks/3", async (c) => {
+  await incrementFeedback("3");
+});
 
 export default app;
