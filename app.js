@@ -11,7 +11,7 @@ async function getFeedback(key) {
 
 async function incrementFeedback(key) {
   const kv = await Deno.openKv();
-  const currentCount = await getFeedback([key]); 
+  const currentCount = await getFeedback(key); 
   await kv.set(key, (currentCount + 1)); 
 }
 
