@@ -11,7 +11,7 @@ async function getFeedback(key) {
 
 async function incrementFeedback(key) {
     const kv = await Deno.openKv();
-    const currentCount = await getFeedbacl(key);
+    const currentCount = await getFeedback(key);
     await kv.set([key], (currentCount + 1));
 }
 
@@ -22,7 +22,8 @@ app.get("/feedbacks/1", async (c) => {
 });
 
 app.post("/feedbacks/1", async (c) => {
-  await incrementFeedback("1");
+    await incrementFeedback("1");
+    return c.text("Feedback 1 incremented");
 });
 
 app.get("/feedbacks/2", async (c) => {
@@ -33,6 +34,7 @@ app.get("/feedbacks/2", async (c) => {
 
 app.post("/feedbacks/2", async (c) => {
   await incrementFeedback("2");
+    return c.text("Feedback 2 incremented");
 });
 
 app.get("/feedbacks/3", async (c) => {
@@ -43,6 +45,7 @@ app.get("/feedbacks/3", async (c) => {
 
 app.post("/feedbacks/3", async (c) => {
   await incrementFeedback("3");
+    return c.text("Feedback 3 incremented");
 });
 
 serve(app.fetch, { port: 7777 });
