@@ -2,18 +2,17 @@ import { serve } from "https://deno.land/std/http/server.ts"; // Updated import 
 import { Hono } from "https://deno.land/x/hono@v3.7.4/mod.ts";
 
 const app = new Hono();
-const server = serve({ port: 7777 }); // Create a server instance
 
 async function getFeedback(key) {
   const kv = await Deno.openKv();
-  const count = await kv.get(key); // Change to kv.get(key)
-  return count ? parseInt(count) : 0; // Use count directly
+  const count = await kv.get([key]); 
+  return count.value ? parseInt(count) : 0; 
 }
 
 async function incrementFeedback(key) {
   const kv = await Deno.openKv();
-  const currentCount = await getFeedback(key); // Fix the function name
-  await kv.set(key, (currentCount + 1).toString()); // Use key and stringify the value
+  const currentCount = await getFeedback([key]); 
+  await kv.set(key, (currentCount + 1)); 
 }
 
 app.get("/feedbacks/1", async (c) => {
@@ -46,6 +45,4 @@ app.post("/feedbacks/3", async (c) => {
   return c.text("Feedback 3 incremented");
 });
 
-for await (const req of server) {
-  app.handleRequest(req);
-}
+serve(app.fetch, { port: 7777 });
