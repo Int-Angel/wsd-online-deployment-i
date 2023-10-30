@@ -6,7 +6,7 @@ const app = new Hono();
 async function getFeedback(key) {
   const kv = await Deno.openKv();
   const count = await kv.get([key]); 
-  return count.value ? parseInt(count) : 0; 
+  return count.value ? parseInt(count.value) : 0; 
 }
 
 async function incrementFeedback(key) {
