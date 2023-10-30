@@ -1,3 +1,4 @@
+import { serve } from "./deps.js";
 import { Hono } from "https://deno.land/x/hono@v3.7.4/mod.ts";
 
 const app = new Hono();
@@ -44,4 +45,4 @@ app.post("/feedbacks/3", async (c) => {
   await incrementFeedback("3");
 });
 
-export default app;
+serve(app.fetch, { port: 7777 });
