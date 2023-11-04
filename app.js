@@ -1,3 +1,4 @@
+// deno run --allow-net --unstable --watch app.js
 import { serve } from "https://deno.land/std/http/server.ts"; // Updated import for serve
 import { Hono } from "https://deno.land/x/hono@v3.7.4/mod.ts";
 
@@ -5,44 +6,47 @@ const app = new Hono();
 
 async function getFeedback(key) {
   const kv = await Deno.openKv();
-  const count = await kv.get([key]); 
-  return count.value ? parseInt(count.value) : 0; 
+  const count = await kv.get([key]);
+  return count.value ? parseInt(count.value) : 0;
 }
 
 async function incrementFeedback(key) {
   const kv = await Deno.openKv();
-  const currentCount = await getFeedback(key); 
-  await kv.set([key], (currentCount + 1)); 
+  const currentCount = await getFeedback(key);
+  await kv.set([key], currentCount + 1);
 }
 
-app.get("/feedbacks/1", async (c) => {
-  const count = await getFeedback("1"); // Pass the key as a string
-  return c.text(`Feedback 1: ${count}`);
+app.get("/", async (c) => {
+  return c.html(`
+        <h1>How would you rate this experience?</h1>
+        <form action="/feedbacks/1" method="post">
+        <button>Poor</button>
+        </form>
+        <form action="/feedbacks/2" method="post">
+        <button>Fair</button>
+        </form>
+        <form action="/feedbacks/3" method="post">
+        <button>Good</button>
+        </form>
+        <form action="/feedbacks/4" method="post">
+        <button>Very good</button>
+        </form>
+        <form action="/feedbacks/5" method="post">
+        <button>Excellent</button>
+        </form>
+    `);
 });
 
-app.post("/feedbacks/1", async (c) => {
-  await incrementFeedback("1");
-  return c.text("Feedback 1 incremented");
+app.get("/feedbacks/:id", async (c) => {
+  const num = c.req.param("id");
+  const count = await getFeedback(num); // Pass the key as a string
+  return c.text(`Feedback ${num}: ${count}`);
 });
 
-app.get("/feedbacks/2", async (c) => {
-  const count = await getFeedback("2");
-  return c.text(`Feedback 2: ${count}`);
-});
-
-app.post("/feedbacks/2", async (c) => {
-  await incrementFeedback("2");
-  return c.text("Feedback 2 incremented");
-});
-
-app.get("/feedbacks/3", async (c) => {
-  const count = await getFeedback("3");
-  return c.text(`Feedback 3: ${count}`);
-});
-
-app.post("/feedbacks/3", async (c) => {
-  await incrementFeedback("3");
-  return c.text("Feedback 3 incremented");
+app.post("/feedbacks/:id", async (c) => {
+  const num = c.req.param("id");
+  await incrementFeedback(num);
+  return c.redirect("/");
 });
 
 serve(app.fetch, { port: 7777 });
