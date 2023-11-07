@@ -17,9 +17,13 @@ const createCourse = async (c) => {
 
 const showCourse = async (c) => {
   const id = c.req.param("courseId");
+  /*
   return c.html(
     eta.render("course.eta", { course: await coursesService.getCourse(id) }),
   );
+  */
+  const course = await coursesService.getCourse(id);
+  return c.text(course.course);
 };
 
 const updateCourse = async (c) => {
