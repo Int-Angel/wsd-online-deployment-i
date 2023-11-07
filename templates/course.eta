@@ -5,13 +5,22 @@
   </head>
   <body>
   <h1> <%= it.course.course %> </h1>
-  <p> <%= it.course.course %> </p>
-    <form method="POST" action="/courses/<%= it.course.id %>">
-      <label for="course">Course:</label>
-      <input type="text" id="course" name="course" value="<%= it.course.course %>" /><br/>
-      <input type="submit" value="Update course" />
-    </form>
-    
+  <h2>How would you rate this course?</h2>
+  <form action="/courses/<%= it.course.id %>/feedbacks/1" method="post">
+    <button>Poor</button>
+  </form>
+  <form action="/courses/<%= it.course.id %>/feedbacks/2" method="post">
+    <button>Fair</button>
+  </form>
+  <form action="/courses/<%= it.course.id %>/feedbacks/3" method="post">
+    <button>Good</button>
+  </form>
+  <form action="/courses/<%= it.course.id %>/feedbacks/4" method="post">
+    <button>Very good</button>
+  </form>
+  <form action="/courses/<%= it.course.id %>/feedbacks/5" method="post">
+    <button>Excellent</button>
+  </form>
     <p><a href="/courses">Back to courses</a></p>
   </body>
 </html>

@@ -34,4 +34,24 @@ const deleteCourse = async (id) => {
   await kv.delete(["courses", id]);
 };
 
-export { createCourse, listCourses, getCourse, updateCourse, deleteCourse };
+async function getFeedback(key, courseId) {
+  const kv = await Deno.openKv();
+  const count = await kv.get(["feedback", courseId, key]);
+  return count.value ? parseInt(count.value) : 0;
+}
+
+async function incrementFeedback(key, courseId) {
+  const kv = await Deno.openKv();
+  const currentCount = await getFeedback(key, courseId);
+  await kv.set(["feedback", courseId, key], currentCount + 1);
+}
+
+export {
+  createCourse,
+  listCourses,
+  getCourse,
+  updateCourse,
+  deleteCourse,
+  getFeedback,
+  incrementFeedback,
+};

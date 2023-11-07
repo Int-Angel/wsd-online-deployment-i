@@ -17,13 +17,11 @@ const createCourse = async (c) => {
 
 const showCourse = async (c) => {
   const id = c.req.param("courseId");
-  /*
   return c.html(
     eta.render("course.eta", { course: await coursesService.getCourse(id) }),
   );
-  */
-  const course = await coursesService.getCourse(id);
-  return c.text(course.course);
+  //const course = await coursesService.getCourse(id);
+  //return c.text(course.course);
 };
 
 const updateCourse = async (c) => {
@@ -39,4 +37,28 @@ const deleteCourse = async (c) => {
   return c.redirect("/courses");
 };
 
-export { createCourse, showForm, showCourse, updateCourse, deleteCourse };
+const getFeedback = async (c) => {
+  const key = c.req.param("id");
+  const courseId = c.req.param("courseId");
+
+  const count = await coursesService.getFeedback(key, courseId);
+  return c.text(`Feedback ${key}: ${count}`);
+};
+
+const incrementFeedback = async (c) => {
+  const key = c.req.param("id");
+  const courseId = c.req.param("courseId");
+
+  await coursesService.incrementFeedback(key, courseId);
+  return c.redirect(`/courses/${courseId}`);
+};
+
+export {
+  createCourse,
+  showForm,
+  showCourse,
+  updateCourse,
+  deleteCourse,
+  getFeedback,
+  incrementFeedback,
+};
