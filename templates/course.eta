@@ -5,7 +5,7 @@
   </head>
   <body>
   <h1> <%= it.course.course %> </h1>
-  <p>How would you rate this course?</p>
+  <p>"How would you rate this course?"</p>
   <form action="/courses/<%= it.course.id %>/feedbacks/1" method="post">
     <button>Poor</button>
   </form>
