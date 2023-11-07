@@ -6,6 +6,9 @@
   <body>
   <h1> <%= it.course.course %> </h1>
   <h2>How would you rate this course?</h2>
+  <p>How would you rate this course?</p>
+  "How would you rate this course?"
+  How would you rate this course?
   <form action="/courses/<%= it.course.id %>/feedbacks/1" method="post">
     <button>Poor</button>
   </form>
