@@ -1,7 +1,14 @@
 import { Eta } from "https://deno.land/x/eta@v3.1.0/src/index.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import * as coursesService from "./coursesService.js";
 
 const eta = new Eta({ views: `${Deno.cwd()}/templates/` });
+
+const validator = z.object({
+  course: z.string().min(4, {
+    message: "The course name should be a string of at least 4 characters.",
+  }),
+});
 
 const showForm = async (c) => {
   return c.html(
@@ -11,6 +18,20 @@ const showForm = async (c) => {
 
 const createCourse = async (c) => {
   const body = await c.req.parseBody();
+  const validationResult = validator.safeParse(body);
+
+  if (!validationResult.success) {
+    return c.html(
+      eta.render("courses.eta", {
+        courses: await coursesService.listCourses(),
+        course: {
+          ...body,
+          errors: validationResult.error.format(),
+        },
+      }),
+    );
+  }
+
   await coursesService.createCourse(body);
   return c.redirect("/courses");
 };
